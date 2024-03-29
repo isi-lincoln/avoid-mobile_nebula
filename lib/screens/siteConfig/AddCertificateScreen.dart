@@ -24,7 +24,7 @@ class CertificateResult {
 }
 
 class AddCertificateScreen extends StatefulWidget {
-  const AddCertificateScreen({
+  AddCertificateScreen({
     Key? key,
     this.onSave,
     this.onReplace,
@@ -35,15 +35,15 @@ class AddCertificateScreen extends StatefulWidget {
 
   // onSave will pop a new CertificateDetailsScreen.
   // If onSave is null, onReplace must be set.
-  final ValueChanged<CertificateResult>? onSave;
+  ValueChanged<CertificateResult>? onSave;
   // onReplace will return the CertificateResult, assuming the previous screen is a CertificateDetailsScreen.
   // If onReplace is null, onSave must be set.
-  final ValueChanged<CertificateResult>? onReplace;
+  ValueChanged<CertificateResult>? onReplace;
 
-  final String pubKey;
-  final String privKey;
+  String pubKey;
+  String privKey;
 
-  final bool supportsQRScanning;
+  bool supportsQRScanning;
 
   @override
   _AddCertificateScreenState createState() => _AddCertificateScreenState();
@@ -105,7 +105,26 @@ class _AddCertificateScreenState extends State<AddCertificateScreen> {
                 );
             },
             ),
-          ])
+          ]),
+      ConfigSection(
+        children: [
+          ConfigButtonItem(
+              content: Center(child: Text('Load private key from file')),
+              onPressed: () async {
+                try {
+                  final content = await Utils.pickFile(context);
+                  if (content == null) {
+                    return;
+                  }
+
+                  widget.privKey = content;
+                  keyController.text = widget.privKey;
+                } catch (err) {
+                  return Utils.popError(context, 'Failed to load private key file', err.toString());
+                }
+              })
+        ],
+      )
     ];
   }
 
@@ -234,11 +253,6 @@ class _AddCertificateScreenState extends State<AddCertificateScreen> {
   }
 
   _addCertEntry(String rawCert) async {
-    // Allow for app store review testing cert to override the generated key
-    if (rawCert.trim() == _testCert) {
-      keyController.text = _testKey;
-    }
-
     try {
       var rawCerts = await platform.invokeMethod("nebula.parseCerts", <String, String>{"certs": rawCert});
 
@@ -284,16 +298,3 @@ class _AddCertificateScreenState extends State<AddCertificateScreen> {
     }
   }
 }
-
-// This a cert that if presented will swap the key to assist the app review process
-const _testCert = '''-----BEGIN NEBULA CERTIFICATE-----
-CpMBChdBcHAgU3RvcmUgUmV2aWV3IERldmljZRIKgpSghQyA/v//DyIGcmV2aWV3
-IhRiNzJjZThiZWM5MDYwYTA3MmNmMSjvk7f5BTCPnYf0BzogYHa3YoNcFJxKX8bU
-jK4pg0aIYxDkwk8aM7w1c+CQXSpKICx06NYtozgKaA2R9NO311D8T86iTXxLmjI4
-0wzAXCSmEkCi9ocqtyQhNp75eKphqVlZNl1RXBo4hdY9jBdc9+b9o0bU4zxFxIRT
-uDneQqytYS+BUfgNnGX5wsMxOEst/kkC
------END NEBULA CERTIFICATE-----''';
-
-const _testKey = '''-----BEGIN NEBULA X25519 PRIVATE KEY-----
-UlyDdFn/2mLFykeWjCEwWVRSDHtMF7nz3At3O77Faf4=
------END NEBULA X25519 PRIVATE KEY-----''';

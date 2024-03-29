@@ -210,10 +210,12 @@ class NebulaVpnService : VpnService() {
         }
 
         registerReceiver(receiver, IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED))
+        // registerReceiver(receiver, IntentFilter(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED), RECEIVER_EXPORTED)
     }
 
     private fun registerReloadReceiver() {
         registerReceiver(reloadReceiver, IntentFilter(ACTION_RELOAD))
+        // registerReceiver(reloadReceiver, IntentFilter(ACTION_RELOAD), RECEIVER_EXPORTED)
     }
 
     private fun unregisterReloadReceiver() {

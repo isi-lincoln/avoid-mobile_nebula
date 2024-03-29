@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mobile_nebula/components/FormPage.dart';
 import 'package:mobile_nebula/components/PlatformTextFormField.dart';
 import 'package:mobile_nebula/components/config/ConfigPageItem.dart';
+import 'package:mobile_nebula/components/config/ConfigButtonItem.dart';
 import 'package:mobile_nebula/components/config/ConfigItem.dart';
 import 'package:mobile_nebula/components/config/ConfigSection.dart';
 import 'package:mobile_nebula/models/Site.dart';
@@ -196,6 +197,34 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
             ],
           ),
           ConfigSection(
+            children: [
+              ConfigButtonItem(
+                  content: Text('Load Config File'),
+                  onPressed: () async {
+                    try {
+                      final content = await Utils.pickFile(context);
+                      if (content == null) {
+                        return;
+                      }
+
+                        /*
+                        _addConfig(content, (err) {
+                        if (err != null) {
+                          Utils.popError(context, 'Error loading config file', err);
+                        } else {
+                          setState(() {});
+                        }
+
+                      });
+                        */
+
+                    } catch (err) {
+                      return Utils.popError(context, 'Failed to load config file', err.toString());
+                    }
+                  })
+            ],
+          ),
+          ConfigSection(
             children: <Widget>[
               ConfigPageItem(
                 content: Text('View rendered config'),
@@ -214,4 +243,6 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
           )
         ]));
   }
+
+
 }

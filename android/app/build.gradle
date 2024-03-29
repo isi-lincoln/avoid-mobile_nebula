@@ -54,23 +54,18 @@ android {
 
     signingConfigs {
         release {
-            keyAlias 'key'
-            storeFile System.getenv('GOOGLE_PLAY_KEYSTORE_PATH') ? file(System.getenv('GOOGLE_PLAY_KEYSTORE_PATH')) : null
-            keyPassword System.getenv('GOOGLE_PLAY_KEYSTORE_PASSWORD')
-            storePassword System.getenv('GOOGLE_PLAY_KEYSTORE_PASSWORD')
+            keyAlias System.getenv('GOOGLE_PLAY_KEY_NAME')
+            storeFile file(System.getenv('GOOGLE_PLAY_KEYSTORE_PATH'))
+            keyPassword System.getenv('GOOGLE_PLAY_KEY_PASSWORD')
+            storePassword System.getenv('GOOGLE_PLAY_STORE_PASSWORD')
         }
     }
 
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue 'string', 'app_name', '"Nebula"'
-        }
-
-        debug {
-            resValue 'string', 'app_name', '"Nebula-DEBUG"'
-            applicationIdSuffix '.debug'
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue 'string', 'app_name', '"Avoid"'
         }
     }
 }
@@ -86,6 +81,4 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation "com.google.guava:guava:31.0.1-android"
     implementation project(':mobileNebula')
-
 }
-
