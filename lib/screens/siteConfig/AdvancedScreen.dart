@@ -1,3 +1,5 @@
+import 'dart:convert'; // jsonDecode
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,14 +43,14 @@ class Advanced {
 }
 
 class AdvancedScreen extends StatefulWidget {
-  const AdvancedScreen({
+  AdvancedScreen({
     Key? key,
     required this.site,
     required this.onSave,
   }) : super(key: key);
 
-  final Site site;
-  final ValueChanged<Advanced> onSave;
+  Site site;
+  ValueChanged<Advanced> onSave;
 
   @override
   _AdvancedScreenState createState() => _AdvancedScreenState();
@@ -202,24 +204,34 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
                   content: Text('Load Config File'),
                   onPressed: () async {
                     try {
-                      final content = await Utils.pickFile(context);
-                      if (content == null) {
-                        return;
-                      }
-
-                        /*
-                        _addConfig(content, (err) {
-                        if (err != null) {
-                          Utils.popError(context, 'Error loading config file', err);
-                        } else {
-                          setState(() {});
+                        final content = await Utils.pickFile(context);
+                        if (content == null) {
+                            return Utils.popError(context, 'File Empty', "");
                         }
-
-                      });
-                        */
-
+                        Map<String, dynamic> config = jsonDecode(content);
+                        try {
+                            //widget.site = Site.fromJson(config);
+                            //config.forEach((k,v) => widget.site[k] = v);
+                            var jData = widget.site.toJson();
+                            config.forEach((k,v) => jData[k] = v);
+                            jData.forEach((k,v) => print("${k}: ${v}"));
+                            widget.site = Site.fromJson(jData);
+                            if (widget.site.errors.length > 0) {
+                                return;
+                            }
+                            try {
+                                widget.site.save(); 
+                                // TODO: look at why it isnt saving when we bakc out
+                                // Look at the save buttons on other pages
+                                setState(() {});
+                            } catch (err) {
+                                return Utils.popError(context, 'Failed to set state', err.toString());
+                            }
+                        } catch (err) {
+                            return Utils.popError(context, 'Failed to read json', err.toString());
+                        }
                     } catch (err) {
-                      return Utils.popError(context, 'Failed to load config file', err.toString());
+                        return Utils.popError(context, 'Failed to load config file', err.toString());
                     }
                   })
             ],

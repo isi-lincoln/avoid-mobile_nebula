@@ -22,44 +22,6 @@ import 'package:mobile_nebula/services/utils.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:uuid/uuid.dart';
 
-/// Contains an expired CA and certificate
-const badDebugSave = {
-  'name': 'Bad Site',
-  'cert': '''-----BEGIN NEBULA CERTIFICATE-----
-CmIKBHRlc3QSCoKUoIUMgP7//w8ourrS+QUwjre3iAY6IDbmIX5cwd+UYVhLADLa
-A5PwucZPVrNtP0P9NJE0boM2SiBSGzy8bcuFWWK5aVArJGA9VDtLg1HuujBu8lOp
-VTgklxJAgbI1Xb1C9JC3a1Cnc6NPqWhnw+3VLoDXE9poBav09+zhw5DPDtgvQmxU
-Sbw6cAF4gPS4e/tZ5Kjc8QEvjk3HDQ==
------END NEBULA CERTIFICATE-----''',
-  'key': '''-----BEGIN NEBULA X25519 PRIVATE KEY-----
-rmXnR1yvDZi1VPVmnNVY8NMsQpEpbbYlq7rul+ByQvg=
------END NEBULA X25519 PRIVATE KEY-----''',
-  'ca': '''-----BEGIN NEBULA CERTIFICATE-----
-CjkKB3Rlc3QgY2EopYyK9wUwpfOOhgY6IHj4yrtHbq+rt4hXTYGrxuQOS0412uKT
-4wi5wL503+SAQAESQPhWXuVGjauHS1Qqd3aNA3DY+X8CnAweXNEoJKAN/kjH+BBv
-mUOcsdFcCZiXrj7ryQIG1+WfqA46w71A/lV4nAc=
------END NEBULA CERTIFICATE-----''',
-};
-
-/// Contains an expired CA and certificate
-const goodDebugSave = {
-  'name': 'Good Site',
-  'cert': '''-----BEGIN NEBULA CERTIFICATE-----
-CmcKCmRlYnVnIGhvc3QSCYKAhFCA/v//DyiX0ZaaBjDjjPf5ETogyYzKdlRh7pW6
-yOd8+aMQAFPha2wuYixuq53ru9+qXC9KIJd3ow6qIiaHInT1dgJvy+122WK7g86+
-Z8qYtTZnox1cEkBYpC0SySrCp6jd/zeAFEJM6naPYgc6rmy/H/qveyQ6WAtbgLpK
-tM3EXbbOE9+fV/Ma6Oilf1SixO3ZBo30nRYL
------END NEBULA CERTIFICATE-----''',
-  'key': '''-----BEGIN NEBULA X25519 PRIVATE KEY-----
-vu9t0mNy8cD5x3CMVpQ/cdKpjdz46NBlcRqvJAQpO44=
------END NEBULA X25519 PRIVATE KEY-----''',
-  'ca': '''-----BEGIN NEBULA CERTIFICATE-----
-CjcKBWRlYnVnKOTQlpoGMOSM9/kROiCWNJUs7c4ZRzUn2LbeAEQrz2PVswnu9dcL
-Sn/2VNNu30ABEkCQtWxmCJqBr5Yd9vtDWCPo/T1JQmD3stBozcM6aUl1hP3zjURv
-MAIH7gzreMGgrH/yR6rZpIHR3DxJ3E0aHtEI
------END NEBULA CERTIFICATE-----''',
-};
-
 class MainScreen extends StatefulWidget {
   const MainScreen(this.dnEnrollStream, {Key? key}) : super(key: key);
 
@@ -114,17 +76,6 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     Widget? debugSite;
 
-    if (kDebugMode) {
-      debugSite = Row(
-        children: [
-          _debugSave(badDebugSave),
-          _debugSave(goodDebugSave),
-          _debugClearKeys(),
-        ],
-        mainAxisAlignment: MainAxisAlignment.center,
-      );
-    }
-
     // Determine whether the device supports QR scanning. For example, some
     // Chromebooks do not have camera support.
     if (Platform.isAndroid) {
@@ -136,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     return SimplePage(
-      title: Text('Nebula'),
+      title: Text('Avoid'),
       scrollable: SimpleScrollable.vertical,
       scrollController: scrollController,
       leadingAction: PlatformIconButton(
