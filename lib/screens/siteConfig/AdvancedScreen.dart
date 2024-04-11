@@ -199,44 +199,6 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
             ],
           ),
           ConfigSection(
-            children: [
-              ConfigButtonItem(
-                  content: Text('Load Config File'),
-                  onPressed: () async {
-                    try {
-                        final content = await Utils.pickFile(context);
-                        if (content == null) {
-                            return Utils.popError(context, 'File Empty', "");
-                        }
-                        Map<String, dynamic> config = jsonDecode(content);
-                        try {
-                            //widget.site = Site.fromJson(config);
-                            //config.forEach((k,v) => widget.site[k] = v);
-                            var jData = widget.site.toJson();
-                            config.forEach((k,v) => jData[k] = v);
-                            jData.forEach((k,v) => print("${k}: ${v}"));
-                            widget.site = Site.fromJson(jData);
-                            if (widget.site.errors.length > 0) {
-                                return;
-                            }
-                            try {
-                                widget.site.save(); 
-                                // TODO: look at why it isnt saving when we bakc out
-                                // Look at the save buttons on other pages
-                                setState(() {});
-                            } catch (err) {
-                                return Utils.popError(context, 'Failed to set state', err.toString());
-                            }
-                        } catch (err) {
-                            return Utils.popError(context, 'Failed to read json', err.toString());
-                        }
-                    } catch (err) {
-                        return Utils.popError(context, 'Failed to load config file', err.toString());
-                    }
-                  })
-            ],
-          ),
-          ConfigSection(
             children: <Widget>[
               ConfigPageItem(
                 content: Text('View rendered config'),

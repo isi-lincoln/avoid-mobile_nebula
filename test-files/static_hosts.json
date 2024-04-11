@@ -1,0 +1,8 @@
+{
+    "192.168.10.1": {
+        "lighthouse": false,
+        "destinations": [
+            "lighthouse.orbitingaround.dyndns.org:4242"
+        ]
+    }
+}

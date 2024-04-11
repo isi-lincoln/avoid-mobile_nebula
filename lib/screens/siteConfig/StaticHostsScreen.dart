@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_nebula/components/FormPage.dart';
@@ -132,6 +135,47 @@ class _StaticHostsScreenState extends State<StaticHostsScreen> {
         },
       ));
     }
+    items.add(
+        ConfigButtonItem(
+            content: Text('Load Config File'),
+            onPressed: () async {
+                try {
+                    final content = await Utils.pickFile(context);
+                    if (content == null) {
+                        return Utils.popError(context, 'File Empty', "");
+                    }
+                    Map<String, dynamic> config = jsonDecode(content);
+                    try {
+                        Map<String, StaticHost> staticHostmap = {};
+                        config.forEach((k, v) {
+                            staticHostmap[k] = StaticHost.fromJson(v);
+                            inspect(staticHostmap[k]);
+                            /*
+                            _hostmap[UniqueKey()] = (
+                                _Hostmap(
+                                    focusNode: FocusNode(),
+                                    nebulaIp: k,
+                                    destinations: staticHostmap[k]!.destinations,
+                                    lighthouse: staticHostmap[k]!.lighthouse,
+                                )
+                            );
+                            */
+                        });
+                        widget.onSave!(staticHostmap);
+                        return StaticHostmapScreen(onSave: (staticHostmap) {
+                            setState(() {
+                                changed = true;
+                                _addHostmap(staticHostmap);
+                             });
+                        });
+                    } catch (err) {
+                        return Utils.popError(context, 'Failed to read json', err.toString());
+                    }
+               } catch (err) {
+                   return Utils.popError(context, 'Failed to load config file', err.toString());
+               }
+         })
+    );
 
     return items;
   }
