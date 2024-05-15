@@ -105,10 +105,14 @@ class _MainScreenState extends State<MainScreen> {
         refreshController.refreshCompleted();
       },
       trailingActions: <Widget>[
-        PlatformIconButton(
-          padding: EdgeInsets.zero,
-          icon: Icon(Icons.menu, size: 28.0),
-          onPressed: () => Utils.openPage(context, (_) => SettingsScreen(widget.dnEnrollStream)),
+        Tooltip(
+            message: "settings",
+            child: PlatformIconButton(
+              key: Key("settings_page"),
+              padding: EdgeInsets.zero,
+              icon: Icon(Icons.menu, size: 28.0),
+              onPressed: () => Utils.openPage(context, (_) => SettingsScreen(widget.dnEnrollStream)),
+            ),
         ),
       ],
       bottomBar: debugSite,

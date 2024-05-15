@@ -53,3 +53,5 @@ lib/generated_plugin_registrant.dart
 /ios/MobileNebula.xcframework/
 android/keystore*
 test.env
+
+lib/src/generated/*

@@ -34,9 +34,12 @@ dependencies:
   flutter_svg: ^1.1.5
   intl: ^0.17.0
   share_plus: ^6.3.0
+  grpc: ^3.0.0
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
 

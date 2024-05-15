@@ -89,3 +89,10 @@ Archive:  avoid.zip
  extracting: toc.pb                  
  extracting: universal.apk         
 ```
+
+
+
+```
+dart pub global activate protoc_plugin
+export PATH="$PATH:$HOME/.pub-cache/bin"
+```

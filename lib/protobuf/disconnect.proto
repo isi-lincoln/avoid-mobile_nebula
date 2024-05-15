@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+service VPNEndpoint {
+  rpc HealthCheck (HCRequest) returns (HCReply) {}
+  rpc Disconnect (DisconnectRequest) returns (DisconnectReply) {}
+}
+
+message HCRequest {}
+
+message HCReply {
+  string reply = 1;
+}
+
+message DisconnectRequest {
+  string requester = 1;
+  string cert = 2;
+  string endpoint = 3;
+}
+
+// reply nothing because we've disconnected?
+message DisconnectReply {
+  string response = 1; // only if on new endpoint
+}

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:grpc/grpc.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,13 +14,31 @@ import 'package:mobile_nebula/models/HostInfo.dart';
 import 'package:mobile_nebula/models/Site.dart';
 import 'package:mobile_nebula/screens/SiteLogsScreen.dart';
 import 'package:mobile_nebula/screens/SiteTunnelsScreen.dart';
+import 'package:mobile_nebula/screens/SiteServiceScreen.dart';
 import 'package:mobile_nebula/screens/siteConfig/SiteConfigScreen.dart';
 import 'package:mobile_nebula/services/utils.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import '../../src/generated/disconnect.pbgrpc.dart';
+
+class VPNEndpointService extends VPNEndpointServiceBase {
+  @override
+  Future<HCReply> healthCheck(ServiceCall call, HCRequest request) async {
+    final response = HCReply();
+    response.reply = DateTime.now().toIso8601String();
+    return response;
+  }
+
+  @override
+  Future<DisconnectReply> disconnect(ServiceCall call, DisconnectRequest request) async {
+    final response = DisconnectReply();
+    response.response = 'VPN connection closed';
+    return response;
+  }
+}
+
 //TODO: If the site isn't active, don't respond to reloads on hostmaps
 //TODO: ios is now the problem with connecting screwing our ability to query the hostmap (its a race)
-
 class SiteDetailScreen extends StatefulWidget {
   const SiteDetailScreen({
     Key? key,
@@ -36,6 +55,7 @@ class SiteDetailScreen extends StatefulWidget {
   _SiteDetailScreenState createState() => _SiteDetailScreenState();
 }
 
+
 class _SiteDetailScreenState extends State<SiteDetailScreen> {
   late Site site;
   late StreamSubscription onChange;
@@ -50,6 +70,7 @@ class _SiteDetailScreenState extends State<SiteDetailScreen> {
     site = widget.site;
     if (site.connected) {
       _listHostmap();
+
     }
 
     onChange = site.onChange().listen((_) {
@@ -57,6 +78,14 @@ class _SiteDetailScreenState extends State<SiteDetailScreen> {
       // If we fetch the hostmap now we'll never get a response. Wait until Nebula is running.
       if (site.status == 'Connected') {
         _listHostmap();
+
+        final server = Server.create(
+          services: [VPNEndpointService()],
+          codecRegistry: CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
+        );
+        await server.serve(port: 55555);
+        print('Server listening on port ${server.port}...');
+
       } else {
         activeHosts = null;
         pendingHosts = null;
@@ -161,6 +190,14 @@ class _SiteDetailScreenState extends State<SiteDetailScreen> {
         onPressed: () {
           Utils.openPage(context, (context) {
             return SiteLogsScreen(site: widget.site);
+          });
+        },
+      ),
+      ConfigPageItem(
+        label: Text('Service'),
+        onPressed: () {
+          Utils.openPage(context, (context) {
+            return SiteServiceScreen(site: widget.site);
           });
         },
       ),
